@@ -44,6 +44,9 @@ builder.Services.AddSingleton<RateLimitingService>();
 builder.Services.AddSingleton<DecryptionAuditService>();
 builder.Services.AddSingleton<DecryptionLoggingService>();
 
+builder.Services.AddSingleton<IDateTimeWrapper, DateTimeWrapper>();
+
+
 builder.Services.AddDbContext<HomeDbContext>(options =>
     options.UseSqlite("Data Source=Homes.db").ConfigureWarnings(warings =>
     warings.Ignore(RelationalEventId.NonTransactionalMigrationOperationWarning)));

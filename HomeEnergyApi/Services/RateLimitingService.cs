@@ -1,4 +1,5 @@
 using HomeEnergyApi.Wrapper;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HomeEnergyApi.Services
 {
@@ -7,9 +8,11 @@ namespace HomeEnergyApi.Services
         private readonly Dictionary<string, List<DateTime>> _requests = new();
         private readonly int _maxRequests = 100;
         private readonly TimeSpan _timeWindow = TimeSpan.FromSeconds(1);
+        private IDateTimeWrapper dateTime;
 
-        public RateLimitingService()
+        public RateLimitingService(IDateTimeWrapper dateTime)
         {
+            this.dateTime = dateTime;
         }
 
         public bool IsRequestAllowed(string clientKey)
@@ -19,20 +22,20 @@ namespace HomeEnergyApi.Services
                 _requests[clientKey] = new List<DateTime>();
             }
 
-            _requests[clientKey].RemoveAll(request => request < DateTime.UtcNow - _timeWindow);
+            _requests[clientKey].RemoveAll(request => request < dateTime.UtcNow() - _timeWindow);
 
             if (_requests[clientKey].Count >= _maxRequests)
             {
                 return false;
             }
 
-            _requests[clientKey].Add(DateTime.UtcNow);
+            _requests[clientKey].Add(dateTime.UtcNow());
             return true;
         }
 
         public bool IsWeekend()
         {
-            var today = DateTime.UtcNow;
+            var today = dateTime.UtcNow();
             return today.DayOfWeek == DayOfWeek.Saturday || today.DayOfWeek == DayOfWeek.Sunday;
         }
     }
