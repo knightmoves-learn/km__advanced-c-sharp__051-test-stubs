@@ -10,6 +10,7 @@ using HomeEnergyApi.Filters;
 using HomeEnergyApi.Authorization;
 using HomeEnergyApi.Security;
 using HomeEnergyApi.Middleware;
+using HomeEnergyApi.Wrapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
